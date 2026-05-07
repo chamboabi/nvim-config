@@ -53,8 +53,24 @@ map("n", "<leader>qp", "<cmd>cprev<cr>zz", { desc = "Prev quickfix" })
 map("n", "<leader>qo", "<cmd>copen<cr>", { desc = "Open quickfix" })
 map("n", "<leader>qc", "<cmd>cclose<cr>", { desc = "Close quickfix" })
 
--- Escape terminal
-map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- Escape terminal / close floating terminal
+map("t", "<Esc><Esc>", function()
+  local win = vim.api.nvim_get_current_win()
+  if vim.api.nvim_win_get_config(win).relative ~= "" then
+    pcall(vim.api.nvim_win_close, win, true)
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
+  end
+end, { desc = "Exit terminal / close float" })
+
+-- Close floating windows
+map("n", "<Esc><Esc>", function()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_config(win).relative ~= "" then
+      pcall(vim.api.nvim_win_close, win, false)
+    end
+  end
+end, { desc = "Close floating windows" })
 
 -- Save
 map({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })

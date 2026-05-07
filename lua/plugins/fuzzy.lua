@@ -10,13 +10,17 @@ return {
       { "<leader>fc",       "<cmd>FzfLua files cwd=~/.config/nvim<cr>", desc = "Find config files" },
 
       -- Grep
-      { "<leader>/",        "<cmd>FzfLua live_grep<cr>",            desc = "Live grep" },
       { "<leader>fw",       "<cmd>FzfLua grep_cword<cr>",           desc = "Grep word under cursor" },
       { "<leader>fW",       "<cmd>FzfLua grep_cWORD<cr>",           desc = "Grep WORD under cursor" },
       { "<leader>fs",       "<cmd>FzfLua grep_visual<cr>",          mode = "v", desc = "Grep selection" },
 
       -- Buffers
+      { "<leader>,",        "<cmd>FzfLua buffers sort_mru=true sort_lastused=true<cr>", desc = "Switch Buffer" },
       { "<leader>fb",       "<cmd>FzfLua buffers<cr>",              desc = "Find buffers" },
+      { "<leader>sb",       "<cmd>FzfLua lines<cr>",                desc = "Buffer Lines" },
+
+      -- Search
+      { "<leader>sg",       "<cmd>FzfLua live_grep<cr>",            desc = "Grep (Root Dir)" },
 
       -- LSP
       { "<leader>ls",       "<cmd>FzfLua lsp_document_symbols<cr>", desc = "Document symbols" },

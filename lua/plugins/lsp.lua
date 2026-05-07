@@ -57,7 +57,7 @@ return {
   -- LSP core (nvim 0.11 API — no lspconfig framework)
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPost", "BufNewFile" },
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = { "williamboman/mason.nvim" },
     config = function()
       -- Diagnostics
@@ -114,8 +114,8 @@ return {
           map("<leader>rn", vim.lsp.buf.rename,                      "Rename symbol")
           map("<leader>ca", vim.lsp.buf.code_action,                 "Code action")
           map("<leader>cf", function() vim.lsp.buf.format({ async = true }) end, "Format")
-          map("[d",         function() vim.diagnostic.goto_prev({ float = true }) end, "Prev diagnostic")
-          map("]d",         function() vim.diagnostic.goto_next({ float = true }) end, "Next diagnostic")
+          map("[d",         function() vim.diagnostic.jump({ count = -1, float = false, on_jump = function() vim.diagnostic.open_float() end }) end, "Prev diagnostic")
+          map("]d",         function() vim.diagnostic.jump({ count =  1, float = false, on_jump = function() vim.diagnostic.open_float() end }) end, "Next diagnostic")
           map("<leader>cd", vim.diagnostic.open_float,               "Line diagnostics")
 
           if client:supports_method("textDocument/inlayHint") then
@@ -144,6 +144,7 @@ return {
             analyses = { unusedparams = true, shadow = true },
             staticcheck = true,
             gofumpt = true,
+            semanticTokens = true,
             hints = {
               assignVariableTypes    = true,
               compositeLiteralFields = true,
@@ -155,6 +156,26 @@ return {
             },
           },
         },
+      })
+
+      -- workaround: gopls doesn't advertise semanticTokensProvider capability
+      -- https://github.com/golang/go/issues/54531#issuecomment-1464982242
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if not client or client.name ~= "gopls" then return end
+          if not client.server_capabilities.semanticTokensProvider then
+            local semantic = client.config.capabilities.textDocument.semanticTokens
+            client.server_capabilities.semanticTokensProvider = {
+              full = true,
+              legend = {
+                tokenTypes = semantic.tokenTypes,
+                tokenModifiers = semantic.tokenModifiers,
+              },
+              range = true,
+            }
+          end
+        end,
       })
 
       vim.lsp.config("lua_ls", {
