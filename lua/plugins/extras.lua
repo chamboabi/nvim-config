@@ -127,8 +127,6 @@ return {
         },
       },
       spec = {
-        { "<leader>9",  group = "99/ai-cli" },
-        { "<leader>a",  group = "ai/codecompanion" },
         { "<leader>b",  group = "buffers" },
         { "<leader>c",  group = "code" },
         { "<leader>e",  group = "explorer" },

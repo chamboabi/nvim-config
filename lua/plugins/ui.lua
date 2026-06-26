@@ -139,6 +139,17 @@ return {
 		end,
 	},
 
+	-- Markdown rendering (hover docs, README buffers)
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "echasnovski/mini.icons" },
+		ft = { "markdown" },
+		opts = {
+			file_types = { "markdown" },
+			hover = { enabled = true },
+		},
+	},
+
 	-- Colorscheme
 	{
 		"folke/tokyonight.nvim",

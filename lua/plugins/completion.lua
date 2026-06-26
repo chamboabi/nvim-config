@@ -44,10 +44,11 @@ return {
   -- Completion
   {
     "saghen/blink.cmp",
-    version = "v0.*",
+    version = "v1.*",
     dependencies = {
       "L3MON4D3/LuaSnip",
       "rafamadriz/friendly-snippets",
+      "tzachar/cmp-tabnine",
     },
     event = "InsertEnter",
     opts = {
@@ -93,7 +94,6 @@ return {
           Event         = "󱐋",
           Operator      = "󰪚",
           TypeParameter = "󰬛",
-          Copilot       = "",
         },
       },
 
@@ -115,24 +115,20 @@ return {
             },
           },
         },
-        ghost_text = { enabled = true },
+        ghost_text = { enabled = false },
+        trigger = { prefetch_on_insert = false },
       },
 
       sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
+        default = { "lsp", "path", "snippets", "buffer", "tabnine" },
         providers = {
-          snippets = {
-            name = "Snippets",
-            module = "blink.cmp.sources.snippets",
-            score_offset = 5,
-            opts = {
-              friendly_snippets = true,
-              search_paths = { vim.fn.stdpath("config") .. "/snippets" },
-            },
+          tabnine = {
+            name = "cmp_tabnine",
+            module = "blink.compat.source",
+            score_offset = 50,
+            async = true,
           },
           buffer = {
-            name = "Buffer",
-            module = "blink.cmp.sources.buffer",
             score_offset = -3,
             opts = {
               get_bufnrs = function()
@@ -145,20 +141,7 @@ return {
         },
       },
 
-      snippets = {
-        expand = function(snippet)
-          require("luasnip").lsp_expand(snippet)
-        end,
-        active = function(filter)
-          if filter and filter.direction then
-            return require("luasnip").jumpable(filter.direction)
-          end
-          return require("luasnip").in_snippet()
-        end,
-        jump = function(direction)
-          require("luasnip").jump(direction)
-        end,
-      },
+      snippets = { preset = "luasnip" },
 
       signature = {
         enabled = true,

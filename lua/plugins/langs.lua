@@ -94,10 +94,10 @@ return {
           project_config = false,
         },
       },
-      flutter_path = nil,       -- auto-detected
-      flutter_lookup_cmd = nil, -- auto-detected
+      flutter_path = vim.fn.expand("$HOME/fvm/default/bin/flutter"),
+      flutter_lookup_cmd = nil,
       root_patterns = { ".git", "pubspec.yaml" },
-      fvm = true,
+      fvm = false,
       widget_guides = { enabled = true },
       closing_tags = {
         highlight = "ErrorMsg",

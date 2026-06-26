@@ -81,6 +81,12 @@ return {
         float = { border = "rounded", source = true },
       })
 
+      vim.keymap.set("n", "<leader>ud", function()
+        local enabled = vim.diagnostic.is_enabled()
+        vim.diagnostic.enable(not enabled)
+        vim.notify("Diagnostics " .. (enabled and "disabled" or "enabled"), vim.log.levels.INFO)
+      end, { desc = "Toggle diagnostics" })
+
       -- Global capabilities (blink.cmp extends these)
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       pcall(function()
@@ -105,13 +111,15 @@ return {
           end
 
           map("gd",         "<cmd>FzfLua lsp_definitions<cr>",      "Go to definition")
+          vim.keymap.set("n", "<leader>ss", "<cmd>FzfLua lsp_document_symbols<cr>", { buffer = bufnr, desc = "LSP: Document symbols" })
           map("gD",         vim.lsp.buf.declaration,                 "Go to declaration")
           map("gr",         "<cmd>FzfLua lsp_references<cr>",        "Go to references")
           map("gi",         "<cmd>FzfLua lsp_implementations<cr>",   "Go to implementation")
           map("gy",         "<cmd>FzfLua lsp_typedefs<cr>",          "Go to type definition")
           map("K",          vim.lsp.buf.hover,                       "Hover docs")
-          map("<C-k>",      vim.lsp.buf.signature_help,              "Signature help")
-          map("<leader>rn", vim.lsp.buf.rename,                      "Rename symbol")
+          map("<leader>lk", vim.lsp.buf.signature_help,              "Signature help")
+          vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: Signature help" })
+          map("<leader>cr", vim.lsp.buf.rename,                      "Rename symbol")
           map("<leader>ca", vim.lsp.buf.code_action,                 "Code action")
           map("<leader>cf", function() vim.lsp.buf.format({ async = true }) end, "Format")
           map("[d",         function() vim.diagnostic.jump({ count = -1, float = false, on_jump = function() vim.diagnostic.open_float() end }) end, "Prev diagnostic")
